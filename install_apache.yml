@@ -6,13 +6,47 @@
   - name: update repository index
     apt:
       update_cache: yes
+    when: ansible_distribution == "Ubuntu"
 
   - name: install apache2 package
     apt:
       name: apache2
       state: latest
+    when: ansible_distribution == "Ubuntu"
 
   - name: add php support for apache
     apt:
       name: libapache2-mod-php
       state: latest
+    when: ansible_distribution == "Ubuntu" 
+
+  - name: update repository index
+    yum:
+      update_cache: yes
+    when: ansible_distribution == "CentOS"
+
+  - name: install apache2 package
+    yum:
+      name: httpd
+      state: latest
+    when: ansible_distribution == "CentOS"
+
+  - name: Start service httpd, if not started
+    ansible.builtin.service:
+      name: httpd
+      state: started
+    when: ansible_distribution == "CentOS"
+
+  - name: Open firewal for port 80/tcp httpd
+#    become: yes
+#    become_user: root
+    command: firewall-cmd --add-port=80/tcp
+    register: myoutput 
+    when: ansible_distribution == "CentOS"
+
+  - name: add php support for apache
+    yum:
+      name: php
+      state: latest
+    when: ansible_distribution == "CentOS"
+
