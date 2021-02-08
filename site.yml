@@ -12,7 +12,6 @@
   - name: install updates (Ubuntu)
     apt:
       upgrade: dist
-      update_cache: yes
     when: ansible_distribution == "Ubuntu"
 
 - hosts: workstation
@@ -24,7 +23,7 @@
 
     - name: install terraform
       unarchive:
-        src: https://releases.hashicorp.com/terraform/0.12.28/terraform_0.12.28_linux_amd64.zip
+        src: https://releases.hashicorp.com/terraform/0.14.6/terraform_0.14.6_linux_amd64.zip
         dest: /usr/local/bin
         remote_src: yes
         mode: 0755
@@ -41,6 +40,7 @@
         - apache2
         - libapache2-mod-php
       state: latest
+      update_cache: yes
     when: ansible_distribution == "Ubuntu"
 
   - name: install apache2 package
@@ -49,7 +49,6 @@
         - httpd
         - php
       state: latest
-      update_cache: yes
     when: ansible_distribution == "CentOS"
 
   - name: copy default html file for site
@@ -61,15 +60,31 @@
       mode: 0644
 
   - name: Start service httpd, if not started
-    ansible.builtin.service:
+    service:
       name: httpd
       state: started
+      enabled: yes
     when: ansible_distribution == "CentOS"
 
   - name: Open firewal for port 80/tcp httpd
     command: firewall-cmd --add-port=80/tcp
     register: myoutput 
     when: ansible_distribution == "CentOS"
+
+  - name: change e-mail address for admin
+    lineinfile:
+      path: /etc/httpd/conf/httpd.conf
+      regexp: '^ServerAdmin'
+      line: ServerAdmin somebody@somewhere.net
+    when: ansible_distribution == "CentOS"
+    register: httpd
+
+  - name: restart httpd (CentOS)
+    service:
+      name: httpd
+      state: restarted
+    when: httpd.changed
+
 
 - hosts: dbserver
   become: true
