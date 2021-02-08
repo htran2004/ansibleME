@@ -3,23 +3,14 @@
   become: true
   tasks:
 
-  - name: update repository index
-    apt:
-      update_cache: yes
-    when: ansible_distribution == "Ubuntu"
-
   - name: install apache2 & libapche-mod-php package
     apt:
       name:
         - apache2
         - libapache2-mod-php
       state: latest
-    when: ansible_distribution == "Ubuntu"
-
-  - name: update repository index
-    yum:
       update_cache: yes
-    when: ansible_distribution == "CentOS"
+    when: ansible_distribution == "Ubuntu"
 
   - name: install apache2 package
     yum:
@@ -27,6 +18,7 @@
         - httpd
         - php
       state: latest
+      update_cache: yes
     when: ansible_distribution == "CentOS"
 
   - name: Start service httpd, if not started

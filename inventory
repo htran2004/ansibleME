@@ -1,6 +1,6 @@
 [webserver]
-10.0.2.5
-[appserver]
+10.0.2.6
+[fileserver]
 10.0.2.7
 [dbserver]
-10.0.2.6
+10.0.2.5
