@@ -8,17 +8,13 @@
       update_cache: yes
     when: ansible_distribution == "Ubuntu"
 
-  - name: install apache2 package
+  - name: install apache2 & libapche-mod-php package
     apt:
-      name: apache2
+      name:
+        - apache2
+        - libapache2-mod-php
       state: latest
     when: ansible_distribution == "Ubuntu"
-
-  - name: add php support for apache
-    apt:
-      name: libapache2-mod-php
-      state: latest
-    when: ansible_distribution == "Ubuntu" 
 
   - name: update repository index
     yum:
@@ -27,7 +23,9 @@
 
   - name: install apache2 package
     yum:
-      name: httpd
+      name:
+        - httpd
+        - php
       state: latest
     when: ansible_distribution == "CentOS"
 
@@ -38,15 +36,6 @@
     when: ansible_distribution == "CentOS"
 
   - name: Open firewal for port 80/tcp httpd
-#    become: yes
-#    become_user: root
     command: firewall-cmd --add-port=80/tcp
     register: myoutput 
     when: ansible_distribution == "CentOS"
-
-  - name: add php support for apache
-    yum:
-      name: php
-      state: latest
-    when: ansible_distribution == "CentOS"
-
