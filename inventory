@@ -1,6 +1,8 @@
 [webserver]
 10.0.2.6
-[fileserver]
+[file_server]
 10.0.2.7
 [dbserver]
 10.0.2.5
+[workstation]
+10.0.2.4
